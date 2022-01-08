@@ -11,5 +11,6 @@ namespace Restaurant.WebApi.Services
         Task<IEnumerable<Bill>> GetAllOrders();
         Task<IEnumerable<Menu>> GetMenusAndItems();
         Task CreateNewOrder(CreateNewOrderViewModel createNewOrderViewModel);
+        Task EditOrder(EditOrderViewModel editOrder);
     }
 }

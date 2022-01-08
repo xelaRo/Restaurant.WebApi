@@ -3,6 +3,7 @@ using Restaurant.WebApi.Infrastructure.OracleDb;
 using Restaurant.WebApi.Infrastructure.OracleDb.Entities;
 using Restaurant.WebApi.Models;
 using Restaurant.WebApi.Models.DTOs;
+using Restaurant.WebApi.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -207,6 +208,39 @@ namespace Restaurant.WebApi.Repository
                             var deliveryInsertResult = await con.ExecuteAsync(deliveryInsertScript);
                         }
 
+                        tran.Commit();
+                    }
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public async Task EditOrder(int billId, int orderStatusId)
+        {
+            var billScript = $"SELECT * FROM BILL WHERE Id = {billId}";
+
+            var con = await _dbCon.GetOltpConnection();
+            using (var tran = con.BeginTransaction())
+            {
+                try
+                {
+                    var bill = await con.QueryFirstOrDefaultAsync<Bill>(billScript);
+
+                    if(bill == null)
+                    {
+                        throw new ArgumentNullException($"The bill with id {billId} was not found");
+                    }
+
+                    var billUpdateScript = $"UPDATE BILL SET STATUS = '{(OrderState)orderStatusId}' WHERE id = {bill.Id}";
+
+                    var result = await con.ExecuteAsync(billUpdateScript);
+
+                    if(result > 0)
+                    {
                         tran.Commit();
                     }
                 }

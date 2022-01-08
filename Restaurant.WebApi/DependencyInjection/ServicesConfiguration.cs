@@ -11,7 +11,7 @@ namespace Restaurant.WebApi.DependencyInjection
             service.AddTransient<IRestaurantDbConnection, RestaurantDbConnection>();
             service.AddTransient<IUserService, UserService>();
             service.AddTransient<IOrderService, OrderService>();
-            //service.AddTransient<ICountyService, CountyService>();
+            service.AddTransient<IDataWarehouseService, DataWarehouseService>();
             //service.AddTransient<ISymptomService, SymptomService>();
 
             return service;

@@ -1,9 +1,7 @@
 ﻿using Restaurant.WebApi.Infrastructure.OracleDb.Entities;
 using Restaurant.WebApi.Models;
 using Restaurant.WebApi.Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Restaurant.WebApi.Services
@@ -38,7 +36,11 @@ namespace Restaurant.WebApi.Services
 
         public async Task CreateNewOrder(CreateNewOrderViewModel createNewOrderViewModel)
         {
-            await _orderRepository.CreateOrder(createNewOrderViewModel.CustomerId,createNewOrderViewModel.IsDelivery, createNewOrderViewModel.Items);
+            await _orderRepository.CreateOrder(createNewOrderViewModel.CustomerId, createNewOrderViewModel.IsDelivery, createNewOrderViewModel.Items);
+        }
+        public async Task EditOrder(EditOrderViewModel editOrder)
+        {
+            await _orderRepository.EditOrder(editOrder.BillId, editOrder.StatusId);
         }
     }
 }

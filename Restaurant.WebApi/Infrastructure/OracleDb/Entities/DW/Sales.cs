@@ -1,4 +1,6 @@
-﻿namespace Restaurant.WebApi.Infrastructure.OracleDb.Entities.DW
+﻿using System.Collections.Generic;
+
+namespace Restaurant.WebApi.Infrastructure.OracleDb.Entities.DW
 {
     public class Sales
     {
@@ -10,5 +12,12 @@
         public int DeliveryId { get; set; }
         public int Quantity { get; set; }
         public float SeelingPrice { get; set; }
+
+        public Bill Bill { get; set; }
+        public Customer Customer { get; set; }
+        public Delivery Delivery { get; set; }
+        public Item Item { get; set; }
+        public DwTime DwTime { get; set; }
+        public LocationAddress LocationAddress { get; set; }
     }
 }

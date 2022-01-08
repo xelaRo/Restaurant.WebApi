@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Restaurant.WebApi.Models;
-using Restaurant.WebApi.Models.DTOs;
 using Restaurant.WebApi.Services;
 using System;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace Restaurant.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrdersByCustomerId(int? customerId)
         {
-            if(customerId == null)
+            if (customerId == null)
             {
                 throw new ArgumentNullException("The customer id is null");
             }
@@ -47,8 +46,15 @@ namespace Restaurant.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateNewOrder([FromBody] CreateNewOrderViewModel createNewOrder)
         {
-
             await _orderService.CreateNewOrder(createNewOrder);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditOrder ([FromBody] EditOrderViewModel createNewOrder)
+        {
+            await _orderService.EditOrder(createNewOrder);
 
             return Ok();
         }
