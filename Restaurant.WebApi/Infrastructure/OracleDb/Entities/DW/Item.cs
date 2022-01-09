@@ -8,12 +8,6 @@
         public int Cooking { get; set; }
         public string Sku { get; set; }
         public float CurrentPrice { get; set; }
-        public int Menu1 { get; set; }
-        public int Menu2 { get; set; }
-        public int Menu3 { get; set; }
-        public int Menu4 { get; set; }
-        public int Menu5 { get; set; }
-        public int Menu6 { get; set; }
-        public int Menu7 { get; set; }
+        public string MenuName { get; set; }
     }
 }
