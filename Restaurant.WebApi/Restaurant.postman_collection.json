@@ -1,0 +1,135 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Restaurant",
+		"_postman_id": "acdaa252-9fb7-76e2-5fb2-8b8e266b6712",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "OLTP",
+			"description": "",
+			"item": [
+				{
+					"name": "GetOrderByCustomerId",
+					"request": {
+						"url": {
+							"raw": "http://localhost:5000/api/order/GetOrdersByCustomerId?customerId=32",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"GetOrdersByCustomerId"
+							],
+							"query": [
+								{
+									"key": "customerId",
+									"value": "32",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "customerId",
+								"value": "1",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "https://localhost:44396/api/order/GetItemsAndMenus",
+					"request": {
+						"url": "https://localhost:44396/api/order/GetItemsAndMenus",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "https://localhost:44396/api/order/CreateNewOrder",
+					"request": {
+						"url": "https://localhost:44396/api/order/CreateNewOrder",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"customerId\": 31,\r\n  \"isDelivery\": true,\r\n  \"items\": [\r\n    {\r\n      \"id\": 2,\r\n      \"quantity\": 2\r\n    },\r\n\t{\r\n      \"id\": 4,\r\n      \"quantity\": 4\r\n    }\r\n  ]\r\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "https://localhost:44396/api/order/GetAllOrders",
+					"request": {
+						"url": "https://localhost:44396/api/order/GetAllOrders",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "https://localhost:44396/api/order/EditOrder",
+					"request": {
+						"url": "https://localhost:44396/api/order/EditOrder",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"billId\":484136,\n\t\"StatusId\": 4\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DW",
+			"description": "",
+			"item": [
+				{
+					"name": "https://localhost:44396/api/dw/GetAllSales",
+					"request": {
+						"url": "https://localhost:44396/api/dw/GetAllSales",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
