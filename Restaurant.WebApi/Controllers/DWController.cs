@@ -21,5 +21,45 @@ namespace Restaurant.WebApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSalesTotalValueFor10Years()
+        {
+            var result = await _dataWarehouseService.GetItemSalesForLast10Years();
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetItemTotalSalesOnMenu()
+        {
+            var result = await _dataWarehouseService.GetItemTotalSalesOnMenu();
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTotalItemSalesBetweenThisYearAndLastYear()
+        {
+            var result = await _dataWarehouseService.GetTotalItemSalesBetweenThisYearAndLastYear();
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAvergeDeliveryTimeOnCountyAndQuarter()
+        {
+            var result = await _dataWarehouseService.GetAvergeDeliveryTimeOnCountyAndQuarter();
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSalesForItemsThatRequireCooking()
+        {
+            var result = await _dataWarehouseService.GetSalesForItemsThatRequireCooking();
+
+            return Ok(result);
+        }
     }
 }

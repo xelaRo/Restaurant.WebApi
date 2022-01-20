@@ -32,7 +32,7 @@ namespace Restaurant.WebApi.Repository
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
         }

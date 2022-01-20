@@ -1,7 +1,1 @@
-﻿drop SEQUENCE SALES_seq
-CREATE SEQUENCE SALES_seq START WITH 1000 INCREMENT BY 1;
- 
-exec spInsertDataFromOltpToDw;
-
-select Max(id) from sales
-
+﻿

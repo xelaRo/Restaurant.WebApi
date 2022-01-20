@@ -119,9 +119,64 @@
 			"description": "",
 			"item": [
 				{
-					"name": "https://localhost:44396/api/dw/GetAllSales",
+					"name": "GetAllSales",
 					"request": {
 						"url": "https://localhost:44396/api/dw/GetAllSales",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GetSalesTotalValueFor10Years",
+					"request": {
+						"url": "https://localhost:44396/api/DW/GetSalesTotalValueFor10Years",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GetItemTotalSalesOnMenu",
+					"request": {
+						"url": "https://localhost:44396/api/DW/GetItemTotalSalesOnMenu",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GetTotalItemSalesBetweenThisYearAndLastYear",
+					"request": {
+						"url": "https://localhost:44396/api/DW/GetTotalItemSalesBetweenThisYearAndLastYear",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GetAvergeDeliveryTimeOnCountyAndQuarter",
+					"request": {
+						"url": "https://localhost:44396/api/DW/GetAvergeDeliveryTimeOnCountyAndQuarter",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GetSalesForItemsThatRequireCooking",
+					"request": {
+						"url": "https://localhost:44396/api/DW/GetSalesForItemsThatRequireCooking",
 						"method": "GET",
 						"header": [],
 						"body": {},

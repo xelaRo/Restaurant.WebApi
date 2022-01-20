@@ -7,5 +7,10 @@ namespace Restaurant.WebApi.Services
     public interface IDataWarehouseService
     {
         Task<IEnumerable<Sales>> GetAllSales();
+        Task<string> GetItemSalesForLast10Years();
+        Task<string> GetItemTotalSalesOnMenu();
+        Task<string> GetTotalItemSalesBetweenThisYearAndLastYear();
+        Task<string> GetAvergeDeliveryTimeOnCountyAndQuarter();
+        Task<string> GetSalesForItemsThatRequireCooking();
     }
 }
