@@ -2,7 +2,6 @@
 using Restaurant.WebApi.Infrastructure.OracleDb;
 using Restaurant.WebApi.Infrastructure.OracleDb.Entities;
 using Restaurant.WebApi.Models;
-using Restaurant.WebApi.Models.DTOs;
 using Restaurant.WebApi.Models.Enums;
 using System;
 using System.Collections.Generic;
@@ -13,9 +12,9 @@ namespace Restaurant.WebApi.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly IRestaurantDbConnection _dbCon;
+        private readonly IApplicationDbConnection _dbCon;
 
-        public OrderRepository(IRestaurantDbConnection dbCon)
+        public OrderRepository(IApplicationDbConnection dbCon)
         {
             _dbCon = dbCon;
         }
@@ -32,8 +31,8 @@ namespace Restaurant.WebApi.Repository
                     " JOIN Delivery_Track dt on dt.billid = b.id" +
                     $" WHERE dt.CustomerId = {customerId}";
 
-                var con = await _dbCon.GetOltpConnection();
-                var result = await con.QueryAsync<Bill,Order_Item,Item, Delivery_Track, Bill >(
+                var con = await _dbCon.GetConnection();
+                var result = await con.QueryAsync<Bill, Order_Item, Item, Delivery_Track, Bill>(
                         script,
                         (bill, orderItem, item, deliveryTrack) =>
                         {
@@ -80,8 +79,8 @@ namespace Restaurant.WebApi.Repository
                     " ORDER BY b.Id Desc)" +
                     " WHERE rownum <= 100";
 
-                var con = await _dbCon.GetOltpConnection();
-                var result = await con.QueryAsync<Bill, Order_Item, Item, Delivery_Track, Bill >(
+                var con = await _dbCon.GetConnection();
+                var result = await con.QueryAsync<Bill, Order_Item, Item, Delivery_Track, Bill>(
                         script,
                         (bill, orderItem, item, deliveryTrack) =>
                         {
@@ -123,7 +122,7 @@ namespace Restaurant.WebApi.Repository
                     " JOIN Menu_Item mi on mi.menuid = m.Id" +
                     " JOIN Item i on i.Id = mi.ItemId";
 
-                var con = await _dbCon.GetOltpConnection();
+                var con = await _dbCon.GetConnection();
                 var result = await con.QueryAsync<Menu, MenuItem, Item, Menu>(
                         script,
                         (menu, menuItem, item) =>
@@ -156,8 +155,8 @@ namespace Restaurant.WebApi.Repository
         public async Task CreateOrder(int customerId, bool isDelivery, List<ItemViewModel> items)
         {
             var billMaxIdScript = "SELECT MAX(Id) + 1 FROM BILL";
-          
-            var con = await _dbCon.GetOltpConnection();
+
+            var con = await _dbCon.GetConnection();
             using (var tran = con.BeginTransaction())
             {
                 try
@@ -173,9 +172,9 @@ namespace Restaurant.WebApi.Repository
 
                     var billInsertResult = await con.ExecuteAsync(billInsertScript);
 
-                    if(billInsertResult > 0)
+                    if (billInsertResult > 0)
                     {
-                        foreach(var item in items)
+                        foreach (var item in items)
                         {
                             var itemScript = $"SELECT * FROM ITEM Where Id = {item.Id}";
                             var itemResult = await con.QueryFirstOrDefaultAsync<Item>(itemScript);
@@ -223,14 +222,14 @@ namespace Restaurant.WebApi.Repository
         {
             var billScript = $"SELECT * FROM BILL WHERE Id = {billId}";
 
-            var con = await _dbCon.GetOltpConnection();
+            var con = await _dbCon.GetConnection();
             using (var tran = con.BeginTransaction())
             {
                 try
                 {
                     var bill = await con.QueryFirstOrDefaultAsync<Bill>(billScript);
 
-                    if(bill == null)
+                    if (bill == null)
                     {
                         throw new ArgumentNullException($"The bill with id {billId} was not found");
                     }
@@ -239,7 +238,7 @@ namespace Restaurant.WebApi.Repository
 
                     var result = await con.ExecuteAsync(billUpdateScript);
 
-                    if(result > 0)
+                    if (result > 0)
                     {
                         tran.Commit();
                     }

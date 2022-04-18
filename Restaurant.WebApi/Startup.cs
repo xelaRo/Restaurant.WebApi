@@ -41,30 +41,30 @@ namespace Restaurant.WebApi
             //services.AddSingleton<IJobFactory, SingletonJobFactory>();
             //services.AddSingleton<ImportOLTPDataToDWJob>();
 
-            services.AddQuartz(q =>
-            {
-                q.UseMicrosoftDependencyInjectionJobFactory();
-                // Create a "key" for the job
-                var jobKey = new JobKey("ImportOLTPDataToDWJob");
+            //services.AddQuartz(q =>
+            //{
+            //    q.UseMicrosoftDependencyInjectionJobFactory();
+            //    // Create a "key" for the job
+            //    var jobKey = new JobKey("ImportOLTPDataToDWJob");
 
-                // Register the job with the DI container
-                q.AddJob<ImportOLTPDataToDWJob>(opts => opts.WithIdentity(jobKey));
+            //    // Register the job with the DI container
+            //    q.AddJob<ImportOLTPDataToDWJob>(opts => opts.WithIdentity(jobKey));
 
-                // Create a trigger for the job
-                q.AddTrigger(opts => opts
-                    .ForJob(jobKey) // link to the HelloWorldJob
-                    .WithIdentity("ImportOLTPDataToDWJob-trigger") // give the trigger a unique name
-                    .WithSimpleSchedule(x => x
-                    .WithIntervalInMinutes(3)
-                    .RepeatForever()));
-            });
+            //    // Create a trigger for the job
+            //    q.AddTrigger(opts => opts
+            //        .ForJob(jobKey) // link to the HelloWorldJob
+            //        .WithIdentity("ImportOLTPDataToDWJob-trigger") // give the trigger a unique name
+            //        .WithSimpleSchedule(x => x
+            //        .WithIntervalInMinutes(3)
+            //        .RepeatForever()));
+            //});
 
             // ASP.NET Core hosting
-            services.AddQuartzServer(options =>
-            {
-                // when shutting down we want jobs to complete gracefully
-                options.WaitForJobsToComplete = true;
-            });
+            //services.AddQuartzServer(options =>
+            //{
+            //    // when shutting down we want jobs to complete gracefully
+            //    options.WaitForJobsToComplete = true;
+            //});
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
