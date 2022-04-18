@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 
 namespace Restaurant.WebApi.Infrastructure.OracleDb
 {
-    public interface IRestaurantDbConnection
+    public interface IApplicationDbConnection
     {
-        Task<IDbConnection> GetOltpConnection();
-        Task<IDbConnection> GetDwConnection();
+        Task<IDbConnection> GetConnection();
+        //Task<IDbConnection> GetDwConnection();
         void CloseConnection(IDbConnection conn);
     }
 }

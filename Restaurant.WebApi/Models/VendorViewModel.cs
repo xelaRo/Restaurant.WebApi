@@ -1,8 +1,7 @@
-﻿namespace Restaurant.WebApi.Infrastructure.OracleDb.Entities
+﻿namespace Restaurant.WebApi.Models
 {
-    public class Vendor
+    public class VendorViewModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }

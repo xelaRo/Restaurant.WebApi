@@ -10,6 +10,6 @@ namespace Restaurant.WebApi.Infrastructure.OracleDb.Entities
         public float ShippingCost { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<Order_Item> OrderItems { get; set; }
-        public Delivery_Track DeliveryTrack { get; set; }
+        public Delivery_Track? DeliveryTrack { get; set; }
     }
 }
