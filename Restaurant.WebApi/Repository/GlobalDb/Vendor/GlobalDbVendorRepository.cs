@@ -11,13 +11,23 @@ namespace Restaurant.WebApi.Repository.GlobalDb.Vendor
 {
     public class GlobalDbVendorRepository : IGlobalDbVendorRepository
     {
-        private DbConnection _dbConnection;
-        private IDbConnection _dbCon;
+        private DbConnection _dbSecondDb;
+        private DbConnection _dbConnectionFirstDb;
+        private DbConnection _dbConnectionGlobalDb;
+        private IDbConnection _dbConSecondDb;
+        private IDbConnection _dbConFirstDb;
+        private IDbConnection _dbConGlobalDb;
 
         public GlobalDbVendorRepository(IConfiguration configuration)
         {
-            _dbConnection = new DbConnection(configuration.GetConnectionString("RestaurantGlobal"));
-            _dbCon = _dbConnection.GetConnection().Result;
+            _dbConnectionFirstDb = new DbConnection(configuration.GetConnectionString("FirstDB"));
+            _dbConFirstDb = _dbConnectionFirstDb.GetConnection().Result;
+
+            _dbSecondDb = new DbConnection(configuration.GetConnectionString("SecondDB"));
+            _dbConSecondDb = _dbSecondDb.GetConnection().Result;
+
+            _dbConnectionGlobalDb = new DbConnection(configuration.GetConnectionString("SecondDB"));
+            _dbConGlobalDb = _dbConnectionGlobalDb.GetConnection().Result;
         }
 
         public async Task<IEnumerable<Infrastructure.OracleDb.Entities.Vendor>> Get()
@@ -26,10 +36,9 @@ namespace Restaurant.WebApi.Repository.GlobalDb.Vendor
             {
                 var script = "SELECT * FROM Vendor";
 
-                var con = await _dbConnection.GetConnection();
-                var result = await con.QueryAsync<Infrastructure.OracleDb.Entities.Vendor>(script);
+                var result = await _dbConGlobalDb.QueryAsync<Infrastructure.OracleDb.Entities.Vendor>(script);
 
-                _dbConnection.CloseConnection(con);
+                _dbConGlobalDb.Close();
 
                 return result;
             }
@@ -43,21 +52,19 @@ namespace Restaurant.WebApi.Repository.GlobalDb.Vendor
         {
             var firstVendorMaxIdScript = "SELECT MAX(Id) + 1 FROM Vendor";
 
-            using (var tran = _dbCon.BeginTransaction())
+            using (var tran = _dbConFirstDb.BeginTransaction())
             {
                 try
                 {
-                    var vendor = await _dbCon.QueryFirstOrDefaultAsync<int>(firstVendorMaxIdScript);
+                    var vendor = await _dbConFirstDb.QueryFirstOrDefaultAsync<int>(firstVendorMaxIdScript);
 
-                    var billInsertScript = "INSERT INTO Vendor (ID, Name, Email, Phone)" +
+                    var billInsertScript = "INSERT INTO Vendor (ID, Name)" +
                                      " SELECT " +
                                      $"{vendor}," +
-                                     $"'{vendorViewModel.Name}'," +
-                                     $"'{vendorViewModel.Email}'," +
-                                     $"'{vendorViewModel.Phone}'" +
+                                     $"'{vendorViewModel.Name}'" +
                                      " FROM dual";
 
-                    var billInsertResult = await _dbCon.ExecuteAsync(billInsertScript);
+                    var billInsertResult = await _dbConFirstDb.ExecuteAsync(billInsertScript);
 
                     tran.Commit();
                 }
@@ -68,20 +75,61 @@ namespace Restaurant.WebApi.Repository.GlobalDb.Vendor
                 }
             }
 
-          
+            using (var tran = _dbConSecondDb.BeginTransaction())
+            {
+                try
+                {
+                    var vendor = await _dbConSecondDb.QueryFirstOrDefaultAsync<int>(firstVendorMaxIdScript);
+
+                    var billInsertScript = "INSERT INTO Vendor (ID, Email, Phone)" +
+                                     " SELECT " +
+                                     $"{vendor}," +
+                                     $"'{vendorViewModel.Email}'," +
+                                     $"'{vendorViewModel.Phone}'" +
+                                     " FROM dual";
+
+                    var billInsertResult = await _dbConSecondDb.ExecuteAsync(billInsertScript);
+
+                    tran.Commit();
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
         }
 
         public async Task Delete(int id)
         {
-            using (var tran = _dbCon.BeginTransaction())
+            using (var tran = _dbConFirstDb.BeginTransaction())
             {
                 try
                 {
                     var vendorScript = $"SELECT * FROM Vendor Where Id = {id}";
-                    var vendor = await _dbCon.QueryFirstOrDefaultAsync<Infrastructure.OracleDb.Entities.Vendor>(vendorScript);
+                    var vendor = await _dbConFirstDb.QueryFirstOrDefaultAsync<Infrastructure.OracleDb.Entities.Vendor>(vendorScript);
 
                     var billDeleteScript = $"DELETE FROM Vendor Where Id = {vendor.Id}";
-                    var billDeleteScriptresult = await _dbCon.ExecuteAsync(billDeleteScript);
+                    var billDeleteScriptresult = await _dbConFirstDb.ExecuteAsync(billDeleteScript);
+
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+
+            using (var tran = _dbConSecondDb.BeginTransaction())
+            {
+                try
+                {
+                    var vendorScript = $"SELECT * FROM Vendor Where Id = {id}";
+                    var vendor = await _dbConSecondDb.QueryFirstOrDefaultAsync<Infrastructure.OracleDb.Entities.Vendor>(vendorScript);
+
+                    var billDeleteScript = $"DELETE FROM Vendor Where Id = {vendor.Id}";
+                    var billDeleteScriptresult = await _dbConSecondDb.ExecuteAsync(billDeleteScript);
 
                     tran.Commit();
                 }
@@ -97,11 +145,11 @@ namespace Restaurant.WebApi.Repository.GlobalDb.Vendor
         {
             var billScript = $"SELECT * FROM Vendor WHERE Id = {vendorEditViewModel.Id}";
 
-            using (var tran = _dbCon.BeginTransaction())
+            using (var tran = _dbConFirstDb.BeginTransaction())
             {
                 try
                 {
-                    var bill = await _dbCon.QueryFirstOrDefaultAsync<Infrastructure.OracleDb.Entities.Vendor>(billScript);
+                    var bill = await _dbConFirstDb.QueryFirstOrDefaultAsync<Infrastructure.OracleDb.Entities.Vendor>(billScript);
 
                     if (bill == null)
                     {
@@ -109,12 +157,40 @@ namespace Restaurant.WebApi.Repository.GlobalDb.Vendor
                     }
 
                     var billUpdateScript = $"UPDATE Vendor " +
-                        $"SET Name = '{vendorEditViewModel.Name}'," +
-                        $" Email = '{vendorEditViewModel.Email}'," +
+                        $"SET Name = '{vendorEditViewModel.Name}'" +
+                        $"WHERE id = {bill.Id}";
+
+                    var result = await _dbConFirstDb.ExecuteAsync(billUpdateScript);
+
+                    if (result > 0)
+                    {
+                        tran.Commit();
+                    }
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+
+            using (var tran = _dbConSecondDb.BeginTransaction())
+            {
+                try
+                {
+                    var bill = await _dbConSecondDb.QueryFirstOrDefaultAsync<Infrastructure.OracleDb.Entities.Vendor>(billScript);
+
+                    if (bill == null)
+                    {
+                        throw new ArgumentNullException($"The Vendor with id {vendorEditViewModel.Id} was not found");
+                    }
+
+                    var billUpdateScript = $"UPDATE Vendor " +
+                        $"SET Email = '{vendorEditViewModel.Email}'," +
                         $" Phone = '{vendorEditViewModel.Phone}'" +
                         $"WHERE id = {bill.Id}";
 
-                    var result = await _dbCon.ExecuteAsync(billUpdateScript);
+                    var result = await _dbConSecondDb.ExecuteAsync(billUpdateScript);
 
                     if (result > 0)
                     {

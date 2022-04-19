@@ -24,7 +24,7 @@ namespace Restaurant.WebApi.Repository.FirstDb.Order
 
         public async Task Create(CreateNewOrderViewModel createNewOrderViewModel)
         {
-            var billMaxIdScript = "SELECT MAX(Id) + 1 FROM BILL";
+            var billMaxIdScript = "SELECT bill_first_seq.nextval from dual";
 
             using (var tran = _dbCon.BeginTransaction())
             {
@@ -48,10 +48,12 @@ namespace Restaurant.WebApi.Repository.FirstDb.Order
                         {
                             var itemScript = $"SELECT * FROM ITEM Where Id = {item.Id}";
                             var itemResult = await _dbCon.QueryFirstOrDefaultAsync<Infrastructure.OracleDb.Entities.Item>(itemScript);
+                            var orderItemIdScript = "SELECT orderItem_first_seq.nextval FROM dual";
+                            var orderItemId = await _dbCon.QueryFirstOrDefaultAsync<int>(orderItemIdScript);
 
                             var orderDetailInsertScript = "INSERT INTO ORDER_ITEM(ID, ORDERID, ITEMID, PRICE, QUANTITY)" +
-                                " SELECT" +
-                                " (SELECT MAX(Id) + 1 FROM ORDER_ITEM) AS Id," +
+                                " SELECT " +
+                                $"{orderItemId}," +
                                 $"{billMaxId}," +
                                 $"{item.Id}," +
                                 $"{itemResult.Price * item.Quantity} ," +

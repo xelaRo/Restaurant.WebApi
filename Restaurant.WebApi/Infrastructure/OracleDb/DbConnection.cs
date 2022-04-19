@@ -21,7 +21,6 @@ namespace Restaurant.WebApi.Infrastructure.OracleDb
         public async Task<IDbConnection> GetConnection()
         {
             var conn = new OracleConnection(ConnectionString);
-
             if (conn.State == ConnectionState.Closed)
             {
                 await conn.OpenAsync();
