@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Restaurant.WebApi.Infrastructure.OracleDb;
-using Restaurant.WebApi.Models;
-using Restaurant.WebApi.Models.GlobalDb;
 using Restaurant.WebApi.Models.SecondDb;
 using System;
 using System.Collections.Generic;
